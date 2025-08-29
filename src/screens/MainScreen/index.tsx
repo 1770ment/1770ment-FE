@@ -9,8 +9,7 @@ import {
 
 interface MainScreenProps {
     navigation: {
-        navigate: (screen: string) => void;
-        goBack: () => void;
+        navigate: (screen: 'Main' | 'Login') => void;
     };
 }
 
@@ -23,7 +22,7 @@ const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => navigation.navigate('Login')}
                 >
                     <Text style={styles.buttonText}>로그인 화면으로 돌아가기</Text>
                 </TouchableOpacity>
