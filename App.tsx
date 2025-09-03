@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import LoginScreen from './src/screens/auth/LoginScreen';
+import TermsScreen from './src/screens/auth/TermsScreen';
 import MainScreen from './src/screens/MainScreen';
 
-type ScreenType = 'Login' | 'Main';
+type ScreenType = 'Login' | 'Terms' | 'Main';
 
 interface Navigation {
   navigate: (screen: ScreenType) => void;
@@ -25,6 +26,8 @@ const App: React.FC = () => {
     switch (currentScreen) {
       case 'Login':
         return <LoginScreen navigation={navigation} />;
+      case 'Terms':
+        return <TermsScreen navigation={navigation} />;
       case 'Main':
         return <MainScreen navigation={navigation} />;
       default:
