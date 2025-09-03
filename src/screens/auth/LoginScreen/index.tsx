@@ -12,19 +12,19 @@ const { width, height } = Dimensions.get('window');
 
 interface LoginScreenProps {
     navigation: {
-        navigate: (screen: 'Main' | 'Login') => void;
+        navigate: (screen: 'Main' | 'Terms' | 'Login') => void;
     };
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     const handleKakaoLogin = () => {
         console.log('카카오로 시작하기');
-        navigation.navigate('Main');
+        navigation.navigate('Terms');
     };
 
     const handleAppleLogin = () => {
         console.log('애플로 시작하기');
-        navigation.navigate('Main');
+        navigation.navigate('Terms');
     };
 
     return (
