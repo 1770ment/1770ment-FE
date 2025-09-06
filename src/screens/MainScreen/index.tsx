@@ -1,27 +1,17 @@
-// src/screens/MainScreen/index.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
     SafeAreaView,
+    Animated,
     StatusBar,
-    Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withRepeat,
-    withTiming,
-    Easing,
-} from 'react-native-reanimated';
-
-const { width, height } = Dimensions.get('window');
-
-// Animated LinearGradient 컴포넌트 생성
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+import BottomTabNavigation from '../../components/bottomNav';
+import ArchiveScreen from '../archive';
+import MyScreen from '../my';
 
 interface MainScreenProps {
     navigation: {
@@ -29,74 +19,117 @@ interface MainScreenProps {
     };
 }
 
-const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
-    // 애니메이션을 위한 회전 값
-    const rotation = useSharedValue(0);
+// 홈 화면 컴포넌트
+const HomeScreen = () => {
+    const animatedValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        // 무한 회전 애니메이션 시작
-        rotation.value = withRepeat(
-            withTiming(360, {
-                duration: 3000, // 3초에 한 바퀴
-                easing: Easing.linear,
-            }),
-            -1, // 무한반복
-            false
-        );
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(animatedValue, {
+                    toValue: 1,
+                    duration: 3000,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(animatedValue, {
+                    toValue: 0,
+                    duration: 3000,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
     }, []);
 
-    // 애니메이션 스타일
-    const animatedStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{ rotate: `${rotation.value}deg` }],
-        };
-    });
-
     const handleButtonPress = (): void => {
-        console.log('원형 버튼 클릭됨');
-        // 네비게이션 예시
-        // navigation.navigate('Login');
+        console.log('그라데이션 버튼 클릭');
     };
 
+    return (
+        <View style={styles.content}>
+            <TouchableOpacity onPress={handleButtonPress} style={styles.buttonWrapper}>
+                <Animated.View
+                    style={[
+                        styles.animatedGradient,
+                        {
+                            transform: [
+                                {
+                                    translateX: animatedValue.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [-50, 50],
+                                    }),
+                                },
+                            ],
+                        },
+                    ]}
+                >
+                    <LinearGradient
+                        colors={['#ff6ec4', '#7873f5', '#4ADEDE']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                </Animated.View>
+                <Text style={styles.buttonText}>시작하기</Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
+    const [activeTab, setActiveTab] = useState('home');
+
     const handleLogout = (): void => {
-        console.log('로그아웃');
         navigation.navigate('Login');
+    };
+
+    const getScreenTitle = () => {
+        switch (activeTab) {
+            case 'home':
+                return '메인 화면';
+            case 'archive':
+                return '아카이브';
+            case '':
+                return '마이페이지';
+            default:
+                return '메인 화면';
+        }
+    };
+
+    const renderScreen = () => {
+        switch (activeTab) {
+            case 'home':
+                return <HomeScreen />;
+            case 'archive':
+                return <ArchiveScreen />;
+            case 'my':
+                return <MyScreen />;
+            default:
+                return <HomeScreen />;
+        }
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-            
-            {/* Header */}
+            <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+
+            {/* 헤더 */}
             <View style={styles.header}>
-                <Text style={styles.title}>러닝크루 메인</Text>
+                <Text style={styles.title}>{getScreenTitle()}</Text>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>로그아웃</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Main Content */}
-            <View style={styles.content}>
-                {/* 원형 마스크 컨테이너 */}
-                <View style={styles.buttonContainer}>
-                    {/* 움직이는 그라데이션 배경 (지름 10cm) */}
-                    <AnimatedLinearGradient
-                        colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#FF6B6B']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 1}}
-                        style={[styles.gradientBackground, animatedStyle]}
-                    />
-                    
-                    {/* 실제 버튼 (지름 5cm) */}
-                    <TouchableOpacity 
-                        style={styles.circleButton} 
-                        onPress={handleButtonPress}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.buttonText}>+</Text>
-                    </TouchableOpacity>
-                </View>
+            {/* 콘텐츠 */}
+            <View style={styles.contentWrapper}>
+                {renderScreen()}
             </View>
+
+            {/* 바텀 네비게이션 */}
+            <BottomTabNavigation 
+                activeTab={activeTab} 
+                setActiveTab={setActiveTab} 
+            />
         </SafeAreaView>
     );
 };
@@ -134,49 +167,54 @@ const styles = StyleSheet.create({
         color: '#6c757d',
         fontWeight: '500',
     },
+    contentWrapper: {
+        flex: 1,
+    },
     content: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    buttonContainer: {
-        width: 189, // 5cm 버튼 크기
-        height: 189,
-        borderRadius: 94.5,
-        overflow: 'hidden', // 마스크 역할
-        position: 'relative',
-    },
-    gradientBackground: {
-        position: 'absolute',
-        width: 378, // 10cm = 2 * 189px
-        height: 378,
-        borderRadius: 189,
-        top: -94.5, // 중앙 정렬 (-189/2)
-        left: -94.5, // 중앙 정렬 (-189/2)
-    },
-    circleButton: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 94.5,
-        backgroundColor: 'transparent', // 투명하게 만들어서 그라데이션이 보이도록
+    screenContainer: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 10,
+        paddingHorizontal: 20,
+    },
+    screenIcon: {
+        fontSize: 60,
+        marginBottom: 20,
+    },
+    screenTitle: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: '#2c3e50',
+        marginBottom: 10,
+    },
+    screenSubtitle: {
+        fontSize: 16,
+        color: '#6c757d',
+        textAlign: 'center',
+        lineHeight: 22,
+    },
+    buttonWrapper: {
+        width: 250,
+        height: 60,
+        borderRadius: 30,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ccc',
+        marginTop: 30,
+    },
+    animatedGradient: {
+        ...StyleSheet.absoluteFillObject,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 48,
+        fontSize: 18,
         fontWeight: 'bold',
-        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-        textShadowOffset: { width: 2, height: 2 },
-        textShadowRadius: 4,
+        zIndex: 1,
     },
 });
 
