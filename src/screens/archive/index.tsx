@@ -1,4 +1,3 @@
-// src/screens/archive/index.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#E5E5EA',
         paddingBottom: 10,
         paddingTop: 8,
-        height: screenHeight * 0.13, // 화면 높이의 13%
+        height: screenHeight * 0.13,
     },
 });
 

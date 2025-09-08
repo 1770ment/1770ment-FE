@@ -25,7 +25,7 @@ const TermsScreen: React.FC<TermsScreenProps> = ({ navigation }) => {
         thirdPartyOptional: false,
     });
 
-    // 전체 동의하기 핸들러
+    // NOTE : 전체 동의하기 핸들러
     const handleAllAgree = () => {
         const newState = !isAllAgreed;
         setIsAllAgreed(newState);
@@ -36,7 +36,7 @@ const TermsScreen: React.FC<TermsScreenProps> = ({ navigation }) => {
         });
     };
 
-    // 개별 약관 동의 핸들러
+    // NOTE : 개별 약관 동의 핸들러
     const handleIndividualAgree = (key: keyof typeof agreements) => {
         const newAgreements = {
             ...agreements,
@@ -44,15 +44,15 @@ const TermsScreen: React.FC<TermsScreenProps> = ({ navigation }) => {
         };
         setAgreements(newAgreements);
 
-        // 필수 항목이 모두 체크되었는지 확인
+        // NOTE : 필수 항목이 모두 체크되었는지 확인
         const allRequired = newAgreements.privacy && newAgreements.thirdPartyRequired;
         const allChecked = allRequired && newAgreements.thirdPartyOptional;
         setIsAllAgreed(allChecked);
     };
 
-    // 동의하고 시작하기 핸들러
+    // NOTE : 동의하고 시작하기 핸들러
     const handleStart = () => {
-        // 필수 항목 체크 확인
+        // NOTE : 필수 항목 체크 확인
         if (!agreements.privacy || !agreements.thirdPartyRequired) {
             Alert.alert(
                 '알림',
@@ -62,7 +62,6 @@ const TermsScreen: React.FC<TermsScreenProps> = ({ navigation }) => {
             return;
         }
 
-        // 메인 화면으로 이동
         navigation.navigate('Main');
     };
 

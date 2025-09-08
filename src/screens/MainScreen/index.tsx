@@ -19,7 +19,6 @@ interface MainScreenProps {
     };
 }
 
-// 홈 화면 컴포넌트
 const HomeScreen = () => {
     const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -78,21 +77,13 @@ const HomeScreen = () => {
 const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState('home');
 
-    const handleLogout = (): void => {
+    // FIXME: 설정 버튼 클릭 시 로그인 화면으로 이동 (임시)
+    const handleSetting = (): void => {
         navigation.navigate('Login');
     };
 
     const getScreenTitle = () => {
-        switch (activeTab) {
-            case 'home':
-                return '메인 화면';
-            case 'archive':
-                return '아카이브';
-            case '':
-                return '마이페이지';
-            default:
-                return '메인 화면';
-        }
+        return '1770'; // FIXME : 임시 타이틀
     };
 
     const renderScreen = () => {
@@ -110,13 +101,13 @@ const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+            <StatusBar barStyle="dark-content" backgroundColor="#ffffffff" />
 
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={styles.title}>{getScreenTitle()}</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>로그아웃</Text>
+                <TouchableOpacity style={styles.settingButton} onPress={handleSetting}>
+                    <Text style={{ fontSize: 24 }}>⚙️</Text>
                 </TouchableOpacity>
             </View>
 
@@ -126,9 +117,9 @@ const MainScreen: React.FC<MainScreenProps> = ({ navigation }) => {
             </View>
 
             {/* 바텀 네비게이션 */}
-            <BottomTabNavigation 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
+            <BottomTabNavigation
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
             />
         </SafeAreaView>
     );
@@ -143,24 +134,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e9ecef',
+        marginTop: 50,
+        paddingHorizontal: 18,
     },
     title: {
-        fontSize: 18,
+        fontSize: 36,
         fontWeight: 'bold',
         color: '#2c3e50',
     },
-    logoutButton: {
-        paddingHorizontal: 12,
+    settingButton: {
+        paddingHorizontal: 5,
         paddingVertical: 6,
-        backgroundColor: '#f8f9fa',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#e9ecef',
     },
     logoutText: {
         fontSize: 12,
