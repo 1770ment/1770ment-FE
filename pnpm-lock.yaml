@@ -44,6 +44,15 @@ importers:
       '@babel/core':
         specifier: ^7.25.2
         version: 7.28.4
+      '@babel/helper-compilation-targets':
+        specifier: ^7.27.2
+        version: 7.27.2
+      '@babel/helper-module-imports':
+        specifier: ^7.27.1
+        version: 7.27.1
+      '@babel/helper-plugin-utils':
+        specifier: ^7.27.1
+        version: 7.27.1
       '@babel/preset-env':
         specifier: ^7.25.3
         version: 7.28.3(@babel/core@7.28.4)
